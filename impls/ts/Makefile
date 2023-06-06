@@ -4,13 +4,13 @@ STEPS = step0_repl
 # 	step8_macros step9_try stepA_mal
 
 all:
-	tsc
+	npm run build
 
-node_modules:
+node_modules: package.json
 	npm install
 
 build/step%.js: node_modules src/*.ts
-	tsc
+	npm run build
 
 
 .PHONY: ts clean

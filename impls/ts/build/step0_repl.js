@@ -1,29 +1,23 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.print = void 0;
-const fs_1 = __importDefault(require("fs"));
+import fs from "fs";
 function read_line() {
-    const buffer = Buffer.alloc(1024);
-    const stdin = fs_1.default.openSync("/dev/stdin", "r");
-    const len = fs_1.default.readSync(stdin, buffer, 0, buffer.byteLength, null);
-    const line = buffer.toString('utf8').slice(0, len + 1);
-    fs_1.default.closeSync(stdin);
+    var buffer = Buffer.alloc(1024);
+    var stdin = fs.openSync("/dev/stdin", "r");
+    var len = fs.readSync(stdin, buffer, 0, buffer.byteLength, null);
+    var line = buffer.toString("utf8").slice(0, len + 1);
+    fs.closeSync(stdin);
     return line;
 }
-function print(...args) {
-    const str = args.join(" ");
-    const stdout = fs_1.default.openSync("/dev/stdout", "w");
-    fs_1.default.writeSync(stdout, str);
-    fs_1.default.closeSync(stdout);
+export function print() {
+    for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+        args[_key] = arguments[_key];
+    }
+    var str = args.join(" ");
+    var stdout = fs.openSync("/dev/stdout", "w");
+    fs.writeSync(stdout, str);
+    fs.closeSync(stdout);
 }
-exports.print = print;
-function READ(x) {
-}
-function EVAL(x) {
-}
+function READ(x) {}
+function EVAL(x) {}
 function PRINT(x) {
     print(x);
 }
@@ -33,11 +27,10 @@ function rep(input) {
     PRINT(input);
 }
 function main() {
-    for (;;) {
+    for(;;){
         print("user> ");
-        const input = read_line();
-        if (input.length === 0)
-            break;
+        var input = read_line();
+        if (input.length === 0) break;
         rep(input);
     }
 }
