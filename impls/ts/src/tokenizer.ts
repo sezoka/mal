@@ -17,11 +17,10 @@ export enum Token_Type {
     string = "string",
     number = "number",
     symbol = "symbol",
+    keyword = "keyword",
     true = "true",
     false = "false",
     nil = "nil",
-    ident = "identifier",
-    macro = "macros",
 }
 
 export class Token {
@@ -66,6 +65,9 @@ function skip_whitespaces_and_commas(t: Tokenizer): void {
     while (!is_at_end(t)) {
         if (is_whitespace(peek(t))) {
             t.position += 1;
+        } else if (peek(t) === ";") {
+            while (peek(t) !== '\n' || is_at_end(t))
+                t.position += 1;
         } else {
             return;
         }
@@ -141,16 +143,16 @@ function is_special_char(c: string): boolean {
 }
 
 
-function match_keyword(literal: string): Token_Type {
-    return keywords.get(literal) ?? Token_Type.ident;
+function match_symbol(literal: string): Token_Type {
+    return keywords.get(literal) ?? Token_Type.symbol;
 }
 
 function parse_identifier(t: Tokenizer, token: Token): Token {
     let start = t.position;
-    let is_symbol = false;
+    let is_keyword = false;
 
     if (peek(t) === ':') {
-        is_symbol = true;
+        is_keyword = true;
         start += 1;
     }
 
@@ -158,27 +160,16 @@ function parse_identifier(t: Tokenizer, token: Token): Token {
 
     const literal = t.src.slice(start, t.position);
 
-    if (is_symbol) {
-        token.type = Token_Type.symbol;
+    if (is_keyword) {
+        token.type = Token_Type.keyword;
         token.literal = literal;
         return token;
     }
 
-    token.type = match_keyword(literal);
-    if (token.type === Token_Type.ident) {
+    token.type = match_symbol(literal);
+    if (token.type === Token_Type.symbol) {
         token.literal = literal;
     }
-
-    return token;
-}
-
-function parse_macro(t: Tokenizer, token: Token): Token {
-    const start = t.position;
-
-    while (peek(t) !== '\n' && !is_at_end(t)) t.position += 1;
-
-    token.literal = t.src.slice(start, t.position);
-    token.type = Token_Type.macro;
 
     return token;
 }
@@ -219,7 +210,7 @@ function next_token(t: Tokenizer): Token {
         case '^': token.type = Token_Type.caret; break;
         case '@': token.type = Token_Type.at; break;
         case '"': return parse_string(t, token);
-        case ';': return parse_macro(t, token);
+        case ';': return skip_comment(t, token);
         default:
             if (is_digit(c) || (c === '-' && is_digit(peek_next(t)))) {
                 return parse_number(t, token);

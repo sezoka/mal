@@ -83,9 +83,9 @@ function read_atom(r: Reader): Mal_Data | null {
             data.value = token.literal;
             data.type = Mal_Type.string;
             break;
-        case Token_Type.ident:
+        case Token_Type.keyword:
             data.value = token.literal;
-            data.type = Mal_Type.ident;
+            data.type = Mal_Type.keyword;
             break;
     }
 

@@ -6,7 +6,7 @@ export enum Mal_Type {
     nil,
     bool,
     string,
-    ident,
+    keyword,
 }
 
 export class Mal_Data {

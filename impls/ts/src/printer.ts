@@ -17,12 +17,12 @@ function escape_str(str: string): string {
 
 export function pr_str(data: Mal_Data, print_readably: boolean): string {
     switch (data.type) {
-        case Mal_Type.symbol: return ":" + data.value as string;
+        case Mal_Type.keyword: return ":" + data.value as string;
         case Mal_Type.int: return (data.value as number).toString();
         case Mal_Type.nil: return "nil";
         case Mal_Type.string: return '"' + escape_str(data.value as string) + '"';
         case Mal_Type.bool: return (data.value as boolean).toString();
-        case Mal_Type.ident: return data.value as string;
+        case Mal_Type.symbol: return data.value as string;
         case Mal_Type.list:
             const list = data.value as Mal_Data[];
             const string_builder = new Array(list.length);
