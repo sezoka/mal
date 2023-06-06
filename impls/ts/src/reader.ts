@@ -111,6 +111,15 @@ function read_atom(r: Reader): Mal_Data | null {
     return data;
 }
 
+function wrap_form(r: Reader, symbol_name: string): Mal_Data | null {
+    next_token(r);
+    const form = read_form(r);
+    if (form === null) return null;
+
+    const symbol = make_mal_data(Mal_Type.symbol, symbol_name);
+    return make_mal_data(Mal_Type.list, [symbol, form]);
+}
+
 function read_form(r: Reader): Mal_Data | null {
     const token = peek_token(r);
 
@@ -120,6 +129,14 @@ function read_form(r: Reader): Mal_Data | null {
         return read_hash_map(r);
     } else if (token.type === Token_Type.left_bracket) {
         return read_vector(r);
+    } else if (token.type === Token_Type.quote) {
+        return wrap_form(r, 'quote');
+    } else if (token.type === Token_Type.quasiquote) {
+        return wrap_form(r, 'quasiquote');
+    } else if (token.type === Token_Type.tilda) {
+        return wrap_form(r, 'unquote');
+    } else if (token.type === Token_Type.tilda_at) {
+        return wrap_form(r, 'splice-unquote');
     } else {
         return read_atom(r);
     }

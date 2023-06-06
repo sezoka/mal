@@ -10,7 +10,7 @@ export enum Token_Type {
     left_paren = "(",
     right_paren = ")",
     quote = "'",
-    grave = "`",
+    quasiquote = "`",
     tilda = "~",
     caret = "^",
     at = "@",
@@ -191,7 +191,7 @@ function next_token(t: Tokenizer): Token {
         case '(': token.type = Token_Type.left_paren; break;
         case ')': token.type = Token_Type.right_paren; break;
         case '\'': token.type = Token_Type.quote; break;
-        case '`': token.type = Token_Type.grave; break;
+        case '`': token.type = Token_Type.quasiquote; break;
         case '~':
             if (peek_next(t) === '@') {
                 t.position += 1;
