@@ -7,6 +7,8 @@ export enum Mal_Type {
     bool,
     string,
     keyword,
+    vector,
+    hash_map,
 }
 
 export class Mal_Data {
@@ -14,4 +16,4 @@ export class Mal_Data {
     value: Mal_Value = null;
 }
 
-export type Mal_Value = Mal_Data[] | number | null | boolean | string;
+export type Mal_Value = Mal_Data[] | Map<Mal_Data, Mal_Data> | number | null | boolean | string;

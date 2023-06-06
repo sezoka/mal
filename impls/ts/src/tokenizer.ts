@@ -53,12 +53,7 @@ function peek_next(t: Tokenizer): string {
 }
 
 function is_whitespace(c: string): boolean {
-    switch (c) {
-        case ' ': case '\n': case '\r': case '\t': case ',':
-            return true;
-        default:
-            return false;
-    }
+    return c === ' ' || c === '\n' || c === '\r' || c === '\t' || c === ',';
 }
 
 function skip_whitespaces_and_commas(t: Tokenizer): void {
@@ -66,8 +61,7 @@ function skip_whitespaces_and_commas(t: Tokenizer): void {
         if (is_whitespace(peek(t))) {
             t.position += 1;
         } else if (peek(t) === ";") {
-            while (peek(t) !== '\n' || is_at_end(t))
-                t.position += 1;
+            while (peek(t) !== '\n' || is_at_end(t)) t.position += 1;
         } else {
             return;
         }
@@ -210,7 +204,6 @@ function next_token(t: Tokenizer): Token {
         case '^': token.type = Token_Type.caret; break;
         case '@': token.type = Token_Type.at; break;
         case '"': return parse_string(t, token);
-        case ';': return skip_comment(t, token);
         default:
             if (is_digit(c) || (c === '-' && is_digit(peek_next(t)))) {
                 return parse_number(t, token);
