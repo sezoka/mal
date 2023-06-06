@@ -30,7 +30,8 @@ function main(): void {
     for (; ;) {
         print("user> ");
         const input = read_line();
-        if (input.length === 0) break;
+        console.log(input.length);
+        if (input.length === 1) break;
         rep(input);
     }
 }

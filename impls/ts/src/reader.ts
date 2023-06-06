@@ -111,8 +111,27 @@ function read_atom(r: Reader): Mal_Data | null {
     return data;
 }
 
-function wrap_form(r: Reader, symbol_name: string): Mal_Data | null {
+function wrap_with_meta(r: Reader, symbol_name: string): Mal_Data | null {
     next_token(r);
+    const meta = read_form(r);
+    if (meta === null) {
+        reader_error("metadata not specified");
+        return null;
+    }
+
+    const form = read_form(r);
+    if (form === null) {
+        reader_error("no form for metadata");
+        return null;
+    }
+
+    const symbol = make_mal_data(Mal_Type.symbol, "with-meta");
+    return make_mal_data(Mal_Type.list, [symbol, form, meta]);
+}
+
+function wrap_quote(r: Reader, symbol_name: string): Mal_Data | null {
+    next_token(r);
+
     const form = read_form(r);
     if (form === null) return null;
 
@@ -123,24 +142,17 @@ function wrap_form(r: Reader, symbol_name: string): Mal_Data | null {
 function read_form(r: Reader): Mal_Data | null {
     const token = peek_token(r);
 
-    if (token.type === Token_Type.left_paren) {
-        return read_list(r);
-    } else if (token.type === Token_Type.left_brace) {
-        return read_hash_map(r);
-    } else if (token.type === Token_Type.left_bracket) {
-        return read_vector(r);
-    } else if (token.type === Token_Type.quote) {
-        return wrap_form(r, 'quote');
-    } else if (token.type === Token_Type.quasiquote) {
-        return wrap_form(r, 'quasiquote');
-    } else if (token.type === Token_Type.tilda) {
-        return wrap_form(r, 'unquote');
-    } else if (token.type === Token_Type.tilda_at) {
-        return wrap_form(r, 'splice-unquote');
-    } else if (token.type === Token_Type.at) {
-        return wrap_form(r, 'deref');
-    } else {
-        return read_atom(r);
+    switch (token.type) {
+        case Token_Type.left_paren: return read_list(r);
+        case Token_Type.left_brace: return read_hash_map(r);
+        case Token_Type.left_bracket: return read_vector(r);
+        case Token_Type.quote: return wrap_quote(r, 'quote');
+        case Token_Type.quasiquote: return wrap_quote(r, 'quasiquote');
+        case Token_Type.tilda: return wrap_quote(r, 'unquote');
+        case Token_Type.tilda_at: return wrap_quote(r, 'splice-unquote');
+        case Token_Type.at: return wrap_quote(r, 'deref');
+        case Token_Type.caret: return wrap_with_meta(r, 'deref');
+        default: return read_atom(r);
     }
 }
 
