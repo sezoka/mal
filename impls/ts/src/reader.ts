@@ -137,6 +137,8 @@ function read_form(r: Reader): Mal_Data | null {
         return wrap_form(r, 'unquote');
     } else if (token.type === Token_Type.tilda_at) {
         return wrap_form(r, 'splice-unquote');
+    } else if (token.type === Token_Type.at) {
+        return wrap_form(r, 'deref');
     } else {
         return read_atom(r);
     }
