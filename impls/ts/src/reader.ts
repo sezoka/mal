@@ -102,7 +102,7 @@ function read_atom(r: Reader): Mal_Data | null {
         case Token_Type.nil: return make_mal_data(Mal_Type.nil, null);
         case Token_Type.true: return make_mal_data(Mal_Type.bool, true);
         case Token_Type.false: return make_mal_data(Mal_Type.bool, false);
-        case Token_Type.number: return make_mal_data(Mal_Type.int, token.literal);
+        case Token_Type.number: return make_mal_data(Mal_Type.int, parseInt(token.literal));
         case Token_Type.string: return make_mal_data(Mal_Type.string, token.literal);
         case Token_Type.symbol: return make_mal_data(Mal_Type.symbol, token.literal);
         case Token_Type.keyword: return make_mal_data(Mal_Type.keyword, token.literal);
@@ -111,7 +111,7 @@ function read_atom(r: Reader): Mal_Data | null {
     return data;
 }
 
-function wrap_with_meta(r: Reader, symbol_name: string): Mal_Data | null {
+function wrap_with_meta(r: Reader): Mal_Data | null {
     next_token(r);
     const meta = read_form(r);
     if (meta === null) {
@@ -151,7 +151,7 @@ function read_form(r: Reader): Mal_Data | null {
         case Token_Type.tilda: return wrap_quote(r, 'unquote');
         case Token_Type.tilda_at: return wrap_quote(r, 'splice-unquote');
         case Token_Type.at: return wrap_quote(r, 'deref');
-        case Token_Type.caret: return wrap_with_meta(r, 'deref');
+        case Token_Type.caret: return wrap_with_meta(r);
         default: return read_atom(r);
     }
 }

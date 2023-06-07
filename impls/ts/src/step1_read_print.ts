@@ -1,4 +1,3 @@
-import fs from "fs";
 import { pr_str } from "./printer.js";
 import { read_str } from "./reader.js";
 import { Mal_Data } from "./types.js";
