@@ -1,3 +1,4 @@
+import { Env } from "./env.js";
 
 export enum Mal_Type {
     list,
@@ -17,7 +18,7 @@ export class Mal_Data {
     value: Mal_Value = null;
 }
 
-export type Mal_Lambda = (args: Mal_List) => Mal_Data;
+export type Mal_Lambda = (args: Mal_List, env: Env) => Mal_Data;
 
 export type Mal_List = Mal_Data[];
 
@@ -43,8 +44,16 @@ export function as_int(data: Mal_Data): number {
     return data.value as number;
 }
 
+export function as_symbol(data: Mal_Data): string {
+    return data.value as string;
+}
+
 export function make_lambda(fn: Mal_Lambda): Mal_Data {
     return make_data(Mal_Type.lambda, fn);
+}
+
+export function make_nil(fn: Mal_Lambda): Mal_Data {
+    return make_data(Mal_Type.nil, null);
 }
 
 export function make_int(val: number): Mal_Data {
